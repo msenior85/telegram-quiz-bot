@@ -2,6 +2,8 @@
 
 Telegram quiz bot is created using the `python-telegram-bot` library. It allows you to create a bot which users can interact with to get random questions from [opentdb](https://opentdb.com/api_config.php) api.
 
+![](https://github.com/msenior85/telegram-quiz-bot/actions/workflows/tests.yml/badge.svg)
+
 ## Features
 
 Get and answer questions from the vast [opentdb](https://opentdb.com/) database via a telegram bot

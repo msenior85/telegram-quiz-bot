@@ -24,7 +24,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def quiz(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send a quiz poll with one question"""
+    """Send a question to the user"""
     questions = await api.get_questions()
     question = questions[0]
 
@@ -44,28 +44,25 @@ async def quiz(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             "message_id": message.message_id,
         }
     }
+
     context.bot_data.update(payload)
 
 
 async def receive_quiz_answer(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
-    quiz_data = context.bot_data.get(update.poll.id)
-    chat_id = quiz_data.get("chat_id")
-    message_id = quiz_data.get("message_id")
+    if not update.poll.is_closed:
+        try:
+            payload = context.bot_data.get(update.poll.id)
+            chat_id = payload.get("chat_id")
+            message_id = payload.get("message_id")
 
-    chosen_answer = None
-    for i, option in enumerate(update.poll.options):
-        if option.voter_count == 1:
-            chosen_answer = i
-            break
+            reply_markup = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Next Question", callback_data="next")]]
+            )
 
-    if chosen_answer == update.poll.correct_option_id:
-        logger.info("Correct answer chosen.")
+            await context.bot.stop_poll(chat_id, message_id, reply_markup=reply_markup)
+            del context.bot_data[update.poll.id]
 
-    reply_markup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("Next Question", callback_data="next")]]
-    )
-
-    if quiz_data and not update.poll.is_closed:
-        await context.bot.stop_poll(chat_id, message_id, reply_markup=reply_markup)
+        except AttributeError as e:
+            logger.error("Error occurred!", exc_info=e)

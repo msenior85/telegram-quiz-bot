@@ -7,6 +7,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     CommandHandler,
     MessageHandler,
+    PicklePersistence,
     PollHandler,
     filters,
 )
@@ -28,7 +29,9 @@ def main() -> None:
     load_dotenv()
     TOKEN = os.getenv("BOT_TOKEN")
 
-    application = ApplicationBuilder().token(TOKEN).build()
+    # persistence to store bot data on restarts
+    persistence = PicklePersistence(filepath=".bot_data")
+    application = ApplicationBuilder().token(TOKEN).persistence(persistence).build()
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))

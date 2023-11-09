@@ -24,7 +24,6 @@ async def get_questions(number: int = 1) -> list[Question]:
                 },
             )
             if response.status_code == 200:
-                logger.info("Received successful response from opentdb api!")
                 data = response.json()
                 questions = []
                 for val in data.get("results"):

@@ -65,7 +65,7 @@ async def test_quiz(mock_get_questions, mock_update, mock_context, question_dict
 
 
 @pytest.mark.asyncio
-async def test_receive_quiz_answer(mock_update, mock_context):
+async def test_receive_quiz_answer(mock_update, mock_context, caplog):
     mock_context.bot.stop_poll = AsyncMock()
 
     option1 = Mock()
@@ -94,3 +94,7 @@ async def test_receive_quiz_answer(mock_update, mock_context):
         poll_data["message_id"],
         reply_markup=reply_markup,
     )
+
+    mock_context.bot_data = {}
+    await receive_quiz_answer(mock_update, mock_context)
+    assert "Error occurred!" in caplog.text

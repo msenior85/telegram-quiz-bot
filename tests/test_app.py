@@ -8,7 +8,7 @@ from quizbot.app import main
 def test_can_initialize(mock_application_builder):
     # Mock the return values of the mock objects
     mock_app = Mock()
-    mock_application_builder.return_value.token.return_value.build.return_value = (
+    mock_application_builder.return_value.token.return_value.persistence.return_value.build.return_value = (
         mock_app
     )
 
